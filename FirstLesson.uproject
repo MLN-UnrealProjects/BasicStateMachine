@@ -1,0 +1,20 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "4.22",
+	"Category": "",
+	"Description": "",
+	"Enterprise": true,
+	"Modules": [
+		{
+			"Name": "FirstLesson",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject",
+				"Engine",
+				"UnrealEd",
+				"AIModule"
+			]
+		}
+	]
+}

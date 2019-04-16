@@ -1,0 +1,7 @@
+Uobjects -> Reflections che poi permette garbage collection e l'hotreload (brutto)
+Hot reload compila una nuova DLL e poi modifica la tabellona di reflection con roba modificata nella nuova dll (quella vecchia non viene rimossa, per cui memoria cresce ad ogni hotreload)
+Slate, ui.
+Non usare smart pointers per gli uobjects (memoria gia gestita), usarli per resto.
+'obj gc' comando per runnare manualmente garbage collector.
+Quando si trascina un actor in un mondo crea due oggetti: uno quando si clicca sull'actor e uno effettivo quando si rilascia il pulsante.
+Factory usate per creare assets
