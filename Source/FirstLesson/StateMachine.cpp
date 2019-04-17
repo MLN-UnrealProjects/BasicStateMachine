@@ -12,6 +12,7 @@ UStateMachine::UStateMachine()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	CurrentStateIndex = INVALID_STATEMACHINE_INDEX;
+	CurrentState = nullptr;
 
 	// ...
 }
@@ -21,21 +22,18 @@ int32 UStateMachine::GetStatesCount() const
 }
 void UStateMachine::ChangeState(const int32 NewStateIndex)
 {
-	if (IsCurrentStateIndexValid())
+	if (CurrentState)
 	{
-		UState* const State = States[CurrentStateIndex];
-		if (State)
-		{
-			States[CurrentStateIndex]->OnStateExit(this);
-		}
+		CurrentState->OnStateExit(this);
 	}
+	CurrentState = nullptr;
 	CurrentStateIndex = NewStateIndex;
 	if (IsCurrentStateIndexValid())
 	{
-		UState* const State = States[CurrentStateIndex];
-		if (State)
+		CurrentState = States[CurrentStateIndex];
+		if (CurrentState)
 		{
-			States[CurrentStateIndex]->OnStateEnter(this);
+			CurrentState->OnStateEnter(this);
 		}
 	}
 }
@@ -52,11 +50,7 @@ void UStateMachine::ClearInvalidStates()
 
 UState* UStateMachine::GetCurrentState() const
 {
-	if (!IsCurrentStateIndexValid())
-	{
-		return nullptr;
-	}
-	return States[CurrentStateIndex];
+	return CurrentState;
 }
 bool UStateMachine::IsCurrentStateIndexValid() const
 {
@@ -89,6 +83,23 @@ int32 UStateMachine::AddStates(const TArray<UState*>& ToAdd)
 	}
 	return Count;
 }
+int32 UStateMachine::GetStateIndex(UState* const State) const
+{
+	if (State == nullptr)
+	{
+		return INVALID_STATEMACHINE_INDEX;
+	}
+	return States.Find(State);
+}
+int32 UStateMachine::RemoveStatesIndex(const TArray<int32>& ToRemove)
+{
+	int32 Count = 0;
+	for (auto const Item : ToRemove)
+	{
+		Count += (RemoveStateIndex(Item));
+	}
+	return Count;
+}
 int32 UStateMachine::RemoveStates(const TArray<UState*>& ToRemove)
 {
 	int32 Count = 0;
@@ -108,18 +119,17 @@ int32 UStateMachine::AddState(UState* const ToAdd)
 }
 bool UStateMachine::RemoveState(UState* const ToRemove)
 {
-	if (IsCurrentStateIndexValid())
+	if (ToRemove == nullptr)
 	{
-		int32 FoundIndex = INVALID_STATEMACHINE_INDEX;
-		const bool bFound{ States.Find(ToRemove, FoundIndex) };
-		if (bFound)
-		{
-			RemoveStateIndex(FoundIndex);
-		}
-		return bFound;
+		return false;
+	}
+	if (CurrentState == ToRemove)
+	{
+		RemoveStateIndex(CurrentStateIndex);
+		return true;
 	}
 
-	return States.Remove(ToRemove) > 0;
+	return RemoveStateIndex(States.Find(ToRemove));
 }
 bool UStateMachine::RemoveStateIndex(const int32 StateIndexToRemove)
 {
@@ -130,8 +140,14 @@ bool UStateMachine::RemoveStateIndex(const int32 StateIndexToRemove)
 	if (CurrentStateIndex == StateIndexToRemove)
 	{
 		ChangeState(INVALID_STATEMACHINE_INDEX);
+		States.RemoveAt(CurrentStateIndex);
+		return true;
 	}
+
 	States.RemoveAt(StateIndexToRemove);
+
+	CurrentStateIndex = States.Find(CurrentState);
+
 	return true;
 }
 UState* UStateMachine::GetState(const int32 Index) const
@@ -147,9 +163,9 @@ UState* UStateMachine::GetState(const int32 Index) const
 void UStateMachine::BeginPlay()
 {
 	Super::BeginPlay();
-	if (!IsCurrentStateIndexValid() && States.Num() > 0)
+	if (bAutoInitialize && !CurrentState && States.Num() > 0)
 	{
-		ChangeState(0);
+		ChangeState(StartingStateIndex);
 	}
 
 	// ...
@@ -162,17 +178,13 @@ void UStateMachine::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (IsCurrentStateIndexValid())
+	if (CurrentState)
 	{
-		UState* const State = States[CurrentStateIndex];
-		if (State)
-		{
-			State->OnStateUpdate(this);
-		}
-		else
-		{
-			ChangeState(INVALID_STATEMACHINE_INDEX);
-		}
+		CurrentState->OnStateUpdate(this);
+	}
+	else
+	{
+		ChangeState(INVALID_STATEMACHINE_INDEX);
 	}
 	// ...
 }
