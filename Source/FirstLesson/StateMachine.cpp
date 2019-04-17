@@ -108,23 +108,18 @@ int32 UStateMachine::AddState(UState* const ToAdd)
 }
 bool UStateMachine::RemoveState(UState* const ToRemove)
 {
-	int32 FoundIndex = INVALID_STATEMACHINE_INDEX;
-	bool bFound{ false };
-	bool bChecked{ false };
 	if (IsCurrentStateIndexValid())
 	{
-		bChecked = true;
-		bFound = States.Find(ToRemove, FoundIndex);
+		int32 FoundIndex = INVALID_STATEMACHINE_INDEX;
+		const bool bFound{ States.Find(ToRemove, FoundIndex) };
+		if (bFound)
+		{
+			RemoveStateIndex(FoundIndex);
+		}
+		return bFound;
 	}
-	if (!bChecked)
-	{
-		return States.Remove(ToRemove) > 0;
-	}
-	if (bFound)
-	{
-		RemoveStateIndex(FoundIndex);
-	}
-	return bFound;
+
+	return States.Remove(ToRemove) > 0;
 }
 bool UStateMachine::RemoveStateIndex(const int32 StateIndexToRemove)
 {
