@@ -1,0 +1,23 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "PlugLesson",
+	"Description": "Lezione sui plugin",
+	"Category": "Other",
+	"CreatedBy": "Matteo Lorenzo Nasci",
+	"CreatedByURL": "https://github.com/MatteoNasci",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "PlugLesson",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
