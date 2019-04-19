@@ -3,25 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
-#include "MyPawn.generated.h"
+#include "GameFramework/Character.h"
+#include "UltimateEnemyCharacter.generated.h"
 
-class UStateMachine;
-class UPawnMovementComponent;
 UCLASS()
-class FIRSTLESSON_API AMyPawn : public APawn
+class FIRSTLESSON_API AUltimateEnemyCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
-	AMyPawn();
+	// Sets default values for this character's properties
+	AUltimateEnemyCharacter();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	UPROPERTY()
-	UPawnMovementComponent* Movement;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -29,7 +26,4 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void Up();
-
-	UPawnMovementComponent* GetMovementComponent() const override;
 };

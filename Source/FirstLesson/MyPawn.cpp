@@ -20,20 +20,6 @@ AMyPawn::AMyPawn()
 	{
 		Movement->UpdatedComponent = RootComponent;
 	}
-	StateMachine = CreateDefaultSubobject<UStateMachine>(TEXT("State Machine"));
-	AddInstanceComponent(StateMachine);
-	StateMachine->RegisterComponent();
-	if (StateMachine)
-	{
-		for (size_t i = 0; i < 5; i++)
-		{
-			StateMachine->AddState(NewObject<UTestState>());
-		}
-		if (!StateMachine->IsCurrentStateIndexValid())
-		{
-			StateMachine->ChangeState(0);
-		}
-	}
 }
 UPawnMovementComponent* AMyPawn::GetMovementComponent() const
 {

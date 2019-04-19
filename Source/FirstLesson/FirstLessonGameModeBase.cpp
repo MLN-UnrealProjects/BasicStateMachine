@@ -5,5 +5,5 @@
 #include "MyPawn.h"
 AFirstLessonGameModeBase::AFirstLessonGameModeBase()
 {
-	DefaultPawnClass = AMyPawn::StaticClass();
+	//DefaultPawnClass = AMyPawn::StaticClass();
 }
